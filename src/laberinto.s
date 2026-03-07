@@ -1,8 +1,8 @@
 .data
 
 startLED: .word 0xf0000090
-rowPathLen: .word 28, 20, 20, 12, 36, 8, 8, 0
-edges: .word 0xf0000114, 0xf0000118
+rowPathLen: .word 16, 12, 12, 12, 20, 12, 24, -1, 4,-1, -1,8, 4, 4, 4,4,4,4,-1, -1, 12,4,4 0 
+edges: .word 0xf0000114, 0xf0000118, 0xf0000120, 0xf0000124, 0xf0000128,0xf0000164, 0xf0000168, 0xf000016c, 0xf00001a0 # is the last of row 2
 
 .text
 la s1, LED_MATRIX_0_BASE
@@ -24,6 +24,7 @@ paintPath:
     paintloop: 
         beq t0, t4, skip     
         beq t1, x0, stopPaint 
+        beq t4, x0, stopPaint
         beq t0, t2, nextWall #break when we find wall        
         sw s2, 0(t0)
         addi t0, t0, 4
