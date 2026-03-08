@@ -2,15 +2,19 @@
 
 startLED: .word 0xf0000090
 
-# -1 appears when we ignore or skip a led to be painted
+# -1 appears when we ignore or skip more than one led, it tells the program that in that point no path should be created
+#The algorithm leaves a single space as default between path lenghts, that is: 4, 4 paints one pixel, ignores the next and paints the other
 rowPathLen: .word 16, 12, 12, 12, 20, 12, 24, -1 # Row 1
             .word 4,-1, -1,12,4,4,4,4,4,4, -1, -1, -1, 4, 4, 4, 4, -1, -1,4,-1 #Row 2
-            .word 4, 24, 12, 12, 4, 12, 4, 24, 0 # Row 3
+            .word 4, 24, 12, 12, 4, 12, 4, 24, -1, # Row 3
+            .word 20, -1, -1, -1, 4, -1, -1, -1, 4, -1, -1, -1, 4, -1, -1, 4, -1, -1, -1, -1, -1, 4, 4, -1, -1, 4, 4, -1,0 # Row 4 
             
 # Edges are the literal borders of the maze or the inner walls to be ignored when painting            
 edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf0000120, 0xf0000124, 0xf0000134,0xf000013c, 0xf0000144,0xf000014c,0xf0000154, 0xf000015c, 0xf0000164,0xf0000168,0xf000016c,0xf0000174,0xf000017c, 0xf0000184, 0xf000018c, 0xf0000190, 0xf0000198, 0xf00001a0 # Row 2
        .word 0xf00001a4,0xf00001ac, 0xf00001b0,0xf00001b4, 0xf000022c #Row 3
+       .word 0xf0000230, 0xf0000248,0xf000024c,0xf0000250, 0xf0000258, 0xf000025c, 0xf0000260, 0xf0000268, 0xf000026c, 0xf0000270, 0xf0000278,0xf000027c,0xf0000284,0xf0000288,0xf000028c,0xf0000290,0xf0000294, 0xf000029c,0xf00002a4, 0xf00002a8, 0xf00002b0, 0xf00002b8 # Row 4
+       
 
 .text
 la s1, LED_MATRIX_0_BASE
