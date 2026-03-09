@@ -2,9 +2,8 @@
 
 startLED: .word 0xf0000090
 
-# -1 appears when we ignore or skip more than one led, it tells the program that in that point no path should be created
 #The algorithm leaves a single space as default between path lenghts, that is: 4, 4 paints one pixel, ignores the next and paints the other
-# so when you see a -1 it is repeated for k-1 times, where k is the amount of leds we want to skip. Basically, how many extra leds you want to skip
+# so when you see a -1 it is repeated for k-1 times, where k is the amount of leds we want to skip. Basically,it is how many extra leds you want to skip
 # -1 also marks the end of a row
 rowPathLen: .word 16, 12,12,12,20,12, 24, -1# Row 1
             .word -1 4,-1,12,4,4,4,4,4,4,-1,-1,4,4,4,4,-1,4,4 -1 # Row 2
@@ -19,7 +18,10 @@ rowPathLen: .word 16, 12,12,12,20,12, 24, -1# Row 1
             .word 4, -1,-1,-1,-1,-1, 20, -1,-1,-1, 28, -1, 24,4, -1 #Row 11
             .word 28,-1,-1,-1,4,-1,12,4,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,4,-1 # Row 12
             .word 4,4,4,16, 16,4,4,24,24,-1 # Row 13
-            .word 4,4,4,-1,-1,-1,4,-1,4,4,4,4,4,4,4,-1,4,-1,-1,-1,-1,0 # Row 14
+            .word 4,4,4,-1,-1,-1,4,-1,4,4,4,4,4,4,4,-1,4,-1,-1,-1,-1,-1,-1 # Row 14
+            .word 4,44, 4,4,4,4,4,4,8,16,-1 # Row 15
+            .word 4, 4, 4, 4, -1, -1,4, 36,4,4,4,-1,4,-1,4,-1 # Row 16
+            .word 4,4,4,28,-1,4,4,-1,52,0 # Row 17
          
 
             
@@ -41,6 +43,12 @@ edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf0000834, 0xf00008bc # Row 15
        .word 0xf00008c0, 0xf0000948 # Row 16
        .word 0xf000094c, 0xf00009d4 # Row 17
+       .word 0xf00009d8, 0xf0000a60 # Row 18
+       .word 0xf0000a64, 0xf0000aec # Row 19
+       .word 0xf0000af0, 0xf0000b78 # Row 20
+       .word 0xf0000b7c, 0xf0000c04 # Row 21
+       .word 0xf0000c08, 0xf0000c90 # Row 22
+       .word 0xf0000c94, 0xf0000d1c # Row 23
        
 .text
 li s2, 0xFFFFFFF # white color to paint paths
