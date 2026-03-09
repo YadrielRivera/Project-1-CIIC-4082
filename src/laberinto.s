@@ -1,6 +1,7 @@
 .data
 
 startLED: .word 0xf0000090
+endLED: .word 0xf0000bb0
 
 #The algorithm leaves a single space as default between path lenghts, that is: 4, 4 paints one pixel, ignores the next and paints the other
 # so when you see a -1 it is repeated for k-1 times, where k is the amount of leds we want to skip. Basically,it is how many extra leds you want to skip
@@ -27,7 +28,7 @@ rowPathLen: .word 16, 12,12,12,20,12, 24, -1# Row 1
             .word 4,4,4,-1,-1,-1,4,-1,-1,-1,4,-1,4,-1,-1,-1,-1,4,-1,4,4,12, -1 # Row 20
             .word 4,24,4,8,16,32,4,4,4,-1 # Row 21
             .word 4,-1,-1,-1,-1,-1,4,4,4,-1,4,-1,4,4,-1,-1,4,-1,4,4,4,4,-1 # Row 22
-            .word 24,52,-1,-1,16,4,8, 0
+            .word 24,52,-1,-1,16,4,12, 0
          
 
             
@@ -61,6 +62,7 @@ li s2, 0xFFFFFFF # white color to paint paths
 la s3, startLED
 la s4 rowPathLen
 la s5 edges
+la s6 endLED
 
 lw t0, 0(s3) #led position pointer
 li t6, -1
@@ -70,7 +72,7 @@ paintPath:
     lw t4, 0(s5) # map edges of current row  
     
     paintloop: 
-        beq t3, x0, stopPaint # if we reach the end    
+        beq t3, x0, setPlayer # if we reach the end    
         beq t3, t6, skipWall #if our position indicates a -1 (inner wall) 
         beq t0, t4, skipEdge #if our position is an edge
         beq t0, t2, skipWall
@@ -91,6 +93,13 @@ paintPath:
             jal x0, paintPath
             
             
-    stopPaint:
-        jal x0, stopPaint
+setPlayer:
+    lw t0, 0(s3) # go back to initial position
+    li t1, 0x44d62c #green
+    sw t1, 0(t0)   
+    
+setEnd: 
+    lw t0, 0(s6) # go back to initial position
+    li t1, 0xFF0000 #red
+    sw t1, 0(t0)     
                 
