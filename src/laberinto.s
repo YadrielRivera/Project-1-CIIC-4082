@@ -15,10 +15,15 @@ rowPathLen: .word 16, 12,12,12,20,12, 24, -1# Row 1
             .word 4,-1,-1,-1,-1,8,4,32,24,-1,20, -1 # Row 7
             .word 28,-1,4,-1,4,-1,-1,-1,-1,4,4,-1,-1,-1,4,-1,4,-1,-1,-1,-1 # Row 8
             .word -1, -1, -1,-1,-1,4,-1,24,28,28,12,-1 # Row 9
+            .word 32,-1,-1,-1,12,-1,-1,-1,-1,-1,-1,4,-1,4,-1,-1,-1,4,4,-1 # Row 10
+            .word 4, -1,-1,-1,-1,-1, 20, -1,-1,-1, 28, -1, 24,4, -1 #Row 11
+            .word 28,-1,-1,-1,4,-1,12,4,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,4,-1 # Row 12
+            .word 4,4,4,16, 16,4,4,24,24,-1 # Row 13
+            .word 4,4,4,-1,-1,-1,4,-1,4,4,4,4,4,4,4,-1,4,-1,-1,-1,-1,0 # Row 14
          
 
             
-# Edges are the literal borders of the maze or the inner walls to be ignored when painting            
+# Edges are the literal borders of the maze to be ignored when painting            
 edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf0000118, 0xf00001a0 # Row 2
        .word 0xf00001a4, 0xf000022c # Row 3
@@ -30,7 +35,13 @@ edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf00004ec, 0xf0000574 # Row 9
        .word 0xf0000578, 0xf0000600 # Row 10
        .word 0xf0000604, 0xf000068c # Row 11 
-
+       .word 0xf0000690, 0xf0000718 # Row 12
+       .word 0xf000071c, 0xf00007a4 # Row 13
+       .word 0xf00007a8, 0xf0000830 # Row 14
+       .word 0xf0000834, 0xf00008bc # Row 15
+       .word 0xf00008c0, 0xf0000948 # Row 16
+       .word 0xf000094c, 0xf00009d4 # Row 17
+       
 .text
 li s2, 0xFFFFFFF # white color to paint paths
 la s3, startLED
