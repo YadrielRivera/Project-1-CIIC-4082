@@ -4,62 +4,54 @@ startLED: .word 0xf0000090
 
 # -1 appears when we ignore or skip more than one led, it tells the program that in that point no path should be created
 #The algorithm leaves a single space as default between path lenghts, that is: 4, 4 paints one pixel, ignores the next and paints the other
-rowPathLen: .word 16, 12, 12, 12, 20, 12, 24, -1 # Row 1
-            .word 4,-1, -1,12,4,4,4,4,4,4, -1, -1, -1, 4, 4, 4, 4, -1, -1,4,-1 #Row 2
-            .word 4, 24, 12, 12, 4, 12, 4, 24, -1 # Row 3
-            .word 20, -1, -1, -1, 4, -1, -1, -1, 4, -1, -1, -1, 4, -1, -1, 4, -1, -1, -1, -1, -1, 4,-1 # Row 4 
-            .word 4, -1, 4, -1,-1, 68, 8,4 -1, -1, -1 #Row 5
-            .word -1, 4,16, 12,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 4, -1,-1 4 #Row 6
-            .word 4, -1, -1, -1, -1, 8,4, 32,24,20, -1 # Row 7
-            .word -1,32, -1,-1,4,-1,4,-1,-1,-1,-1,4,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1 0 #Row 8
+rowPathLen: .word 16, 12,12,12,20,12, 24, -1# Row 1
+            .word -1 4,-1,12,4,4,4,4,4,4,-1,-1,4,4,4,4,-1,4,4 -1 # Row 2
+            .word 4, -1, -1,24,12,12,4,12,4, 24, -1 # Row 3
+            .word 20, -1, -1, 4, -1, -1, 4, -1, -1, 4, -1, 4, -1, -1, -1, -1, 4, 4,-1,4,4,0
+         
 
             
 # Edges are the literal borders of the maze or the inner walls to be ignored when painting            
 edges: .word 0xf0000114, 0xf0000118 # Row 1
-       .word 0xf0000120, 0xf0000124, 0xf0000134,0xf000013c, 0xf0000144,0xf000014c,0xf0000154, 0xf000015c, 0xf0000164,0xf0000168,0xf000016c,0xf0000174,0xf000017c, 0xf0000184, 0xf000018c, 0xf0000190, 0xf0000198, 0xf00001a0 # Row 2
-       .word 0xf00001a4,0xf00001ac, 0xf00001b0,0xf00001b4, 0xf000022c #Row 3
-       .word 0xf0000230, 0xf0000248,0xf000024c,0xf0000250, 0xf0000258, 0xf000025c, 0xf0000260, 0xf0000268, 0xf000026c, 0xf0000270, 0xf0000278,0xf000027c,0xf0000284,0xf0000288,0xf000028c,0xf0000290,0xf0000294, 0xf000029c,0xf00002a4, 0xf00002a8, 0xf00002b0, 0xf00002b8 # Row 4
-       .word 0xf00002bc,0xf00002c4, 0xf00002cc,0xf00002d0, 0xf00002e0,0xf00002e4, 0xf00002e8, 0xf0000330, 0xf000033c  0xf0000344 #Row 5
-       .word 0xf0000348,0xf000037c,0xf0000380,0xf0000384,0xf0000388,0xf000038c,0xf0000390,0xf0000394,0xf0000398,0xf000039c,0xf00003a0,0xf00003a4,0xf00003a8,0xf00003ac,0xf00003b0,0xf00003b4,0xf00003b8,0xf00003bc, 0xf00003c4,0xf00003c8, 0xf00003d0 #Row 6
-       .word 0xf00003d4, 0xf00003e0, 0xf00003e4, 0xf00003e8, 0xf00003ec, 0xf000045c #Row 7
-       .word 0xf0000460,0xf0000480,0xf0000484,0xf000048c,0xf0000490,0xf0000498,0xf000049c,0xf00004a0,0xf00004a4,0xf00004a8,0xf00004ac,0xf00004b8,0xf00004bc,0xf00004c0,0xf00004c4, 0xf00004cc, 0xf00004d0, 0xf00004d8, 0xf00004dc, 0xf00004e0, 0xf00004e4, 0xf00004e8 # Row 8
+       .word 0xf0000118, 0xf00001a0 # Row 2
+       .word 0xf00001a4, 0xf000022c # Row 3
+       .word 0xf0000230, 0xf00002b8 # Row 4
+    
 
 .text
-la s1, LED_MATRIX_0_BASE
-la s2, 0xFFFFFFF # white color to paint paths
+li s2, 0xFFFFFFF # white color to paint paths
 la s3, startLED
 la s4 rowPathLen
 la s5 edges
 
-lw t0, 0(s3) #led position
-add t3, x0, s4 #address for path length 
-
+lw t0, 0(s3) #led position pointer
+li t6, -1
 paintPath:    
-
-    lw t1, 0(t3) # relative pos of wall 
-    lw t4, 0(s5)
-    add t2, t0, t1 # absolute pos of wall 
-  
+    lw t3, 0(s4) #element inside address for path lengths or length indicator 
+    add t2, t0, t3 # total path length, the final position to paint
+    lw t4, 0(s5) # map edges of current row  
     
     paintloop: 
-        beq t0, t4, skip     
-        beq t1, x0, stopPaint 
-        beq t4, x0, stopPaint
-        beq t0, t2, nextWall #break when we find wall        
+        beq t3, x0, stopPaint # if we reach the end    
+        beq t3, t6, skipWall #if our position indicates a -1 (inner wall) 
+        beq t0, t4, skipEdge #if our position is an edge
+        beq t0, t2, skipWall
+        
         sw s2, 0(t0)
         addi t0, t0, 4
         jal x0 paintloop      
           
-        nextWall: #skips the wall to paint path after it
-            addi t0, t0, 4
-            addi t3,t3, 4
-            jal x0, paintPath  
+        skipWall: #skips the wall to paint path after it
+             addi t0, t0, 4
+             addi s4, s4, 4
+             jal x0, paintPath
              
-        skip: # skip the edges
+        skipEdge: # skip the edges
             addi t0, t0, 4
-            addi t3,t3, 4
-            addi s5,s5,4
+            addi s4, s4, 4
+            addi s5, s5, 4
             jal x0, paintPath
+            
             
     stopPaint:
         jal x0, stopPaint
