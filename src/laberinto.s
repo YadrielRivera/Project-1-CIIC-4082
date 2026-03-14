@@ -97,9 +97,136 @@ setPlayer:
     lw t0, 0(s3) # go back to initial position
     li t1, 0x44d62c #green
     sw t1, 0(t0)   
+    sw t1, 0(t0)
+    mv s7, t0
+    mv s8, t0
     
 setEnd: 
     lw t0, 0(s6) # go back to initial position
     li t1, 0xFF0000 #red
     sw t1, 0(t0)     
                 
+    jal x0, gameLoop
+    
+gameLoop:
+    li t4, 0xf0000dac      # UP
+    lw t5, 0(t4)
+    bnez t5, moveUp
+
+    li t4, 0xf0000db0      # DOWN
+    lw t5, 0(t4)
+    bnez t5, moveDown
+
+    li t4, 0xf0000db4      # LEFT
+    lw t5, 0(t4)
+    bnez t5, moveLeft
+
+    li t4, 0xf0000db8      # RIGHT
+    lw t5, 0(t4)
+    bnez t5, moveRight
+
+    jal x0, gameLoop
+
+
+waitRelease:
+    li t4, 0xf0000dac      # UP
+    lw t5, 0(t4)
+    bnez t5, waitRelease
+
+    li t4, 0xf0000db0      # DOWN
+    lw t5, 0(t4)
+    bnez t5, waitRelease
+
+    li t4, 0xf0000db4      # LEFT
+    lw t5, 0(t4)
+    bnez t5, waitRelease
+
+    li t4, 0xf0000db8      # RIGHT
+    lw t5, 0(t4)
+    bnez t5, waitRelease
+
+    jal x0, gameLoop
+
+
+resetPlayer:
+    sw s2, 0(s7)
+    mv s7, s8
+    li t1, 0x44d62c
+    sw t1, 0(s7)
+    jal x0, waitRelease
+
+
+moveRight:
+    addi t2, s7, 4
+    lw t3, 0(t2)
+
+    li t4, 0xFF0000
+    beq t3, t4, resetPlayer
+
+    mv t4, s2
+    bne t3, t4, gameLoop
+
+    sw s2, 0(s7)
+    mv s7, t2
+
+    li t1, 0x44d62c
+    sw t1, 0(s7)
+
+    jal x0, waitRelease
+
+
+moveLeft:
+    addi t2, s7, -4
+    lw t3, 0(t2)
+
+    li t4, 0xFF0000
+    beq t3, t4, resetPlayer
+
+    mv t4, s2
+    bne t3, t4, gameLoop
+
+    sw s2, 0(s7)
+    mv s7, t2
+
+    li t1, 0x44d62c
+    sw t1, 0(s7)
+
+    jal x0, waitRelease
+
+
+moveDown:
+    addi t2, s7, 140
+    lw t3, 0(t2)
+
+    li t4, 0xFF0000
+    beq t3, t4, resetPlayer
+
+    mv t4, s2
+    bne t3, t4, gameLoop
+
+    sw s2, 0(s7)
+    mv s7, t2
+
+    li t1, 0x44d62c
+    sw t1, 0(s7)
+
+    jal x0, waitRelease
+
+
+moveUp:
+    addi t2, s7, -140
+    lw t3, 0(t2)
+
+    li t4, 0xFF0000
+    beq t3, t4, resetPlayer
+
+    mv t4, s2
+    bne t3, t4, gameLoop
+
+    sw s2, 0(s7)
+    mv s7, t2
+
+    li t1, 0x44d62c
+    sw t1, 0(s7)
+
+    jal x0, waitRelease
