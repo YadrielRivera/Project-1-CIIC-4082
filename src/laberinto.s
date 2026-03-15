@@ -58,6 +58,7 @@ edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf0000c94, 0xf0000d1c # Row 23
        
 .text
+la s1, LED_MATRIX_0_BASE
 li s2, 0xFFFFFFF # white color to paint paths
 la s3, startLED
 la s4 rowPathLen
@@ -111,19 +112,19 @@ setEnd:
 gameLoop:
     li t4, 0xf0000dac      # UP
     lw t5, 0(t4)
-    bnez t5, moveUp
+    bne t5, x0 moveUp
 
     li t4, 0xf0000db0      # DOWN
     lw t5, 0(t4)
-    bnez t5, moveDown
+    bne t5, x0 moveDown
 
     li t4, 0xf0000db4      # LEFT
     lw t5, 0(t4)
-    bnez t5, moveLeft
+    bne t5, x0 moveLeft
 
     li t4, 0xf0000db8      # RIGHT
     lw t5, 0(t4)
-    bnez t5, moveRight
+    bne t5, x0 moveRight
 
     jal x0, gameLoop
 
@@ -131,26 +132,26 @@ gameLoop:
 waitRelease:
     li t4, 0xf0000dac      # UP
     lw t5, 0(t4)
-    bnez t5, waitRelease
+    bne t5, x0 waitRelease
 
     li t4, 0xf0000db0      # DOWN
     lw t5, 0(t4)
-    bnez t5, waitRelease
+    bne t5, x0 waitRelease
 
     li t4, 0xf0000db4      # LEFT
     lw t5, 0(t4)
-    bnez t5, waitRelease
+    bne t5, x0 waitRelease
 
     li t4, 0xf0000db8      # RIGHT
     lw t5, 0(t4)
-    bnez t5, waitRelease
+    bne t5,x0 waitRelease
 
     jal x0, gameLoop
 
 
 resetPlayer:
     sw s2, 0(s7)
-    mv s7, s8
+    add s7, s8, x0
     li t1, 0x44d62c
     sw t1, 0(s7)
     jal x0, waitRelease
@@ -160,14 +161,14 @@ moveRight:
     addi t2, s7, 4
     lw t3, 0(t2)
 
-    li t4, 0xFF0000
-    beq t3, t4, resetPlayer
+    li t4, 0xFF0000 # red
+    beq t3, t4, wonGame
 
-    mv t4, s2
+    add t4, s2, x0
     bne t3, t4, gameLoop
 
     sw s2, 0(s7)
-    mv s7, t2
+    add s7, t2, x0
 
     li t1, 0x44d62c
     sw t1, 0(s7)
@@ -182,11 +183,11 @@ moveLeft:
     li t4, 0xFF0000
     beq t3, t4, resetPlayer
 
-    mv t4, s2
+    add t4, s2, x0
     bne t3, t4, gameLoop
 
     sw s2, 0(s7)
-    mv s7, t2
+    add s7, t2, x0
 
     li t1, 0x44d62c
     sw t1, 0(s7)
@@ -201,11 +202,11 @@ moveDown:
     li t4, 0xFF0000
     beq t3, t4, resetPlayer
 
-    mv t4, s2
+    add t4, s2, x0
     bne t3, t4, gameLoop
 
     sw s2, 0(s7)
-    mv s7, t2
+    add s7, t2, x0
 
     li t1, 0x44d62c
     sw t1, 0(s7)
@@ -220,13 +221,30 @@ moveUp:
     li t4, 0xFF0000
     beq t3, t4, resetPlayer
 
-    mv t4, s2
+    add t4, s2, x0
     bne t3, t4, gameLoop
 
     sw s2, 0(s7)
-    mv s7, t2
+    add s7, t2, x0
 
     li t1, 0x44d62c
     sw t1, 0(s7)
 
     jal x0, waitRelease
+    
+wonGame:
+    add t0, x0, s1
+    lw t1, 0(t0)
+    li t2, 0x44d62c # green
+    li t3, 0xda8
+    add t4, t1, t3 #last led
+    
+    paintWinScreen:
+        lw t1, 0(t0)
+        beq t1, t4, exitgame
+        sw t2, 0(t0)
+        addi t0, t0, 4
+        jal x0, paintWinScreen
+
+exitgame:
+    add x0,x0,x0 # meaningless instruction so that label is valid and program ends
