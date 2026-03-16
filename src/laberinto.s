@@ -148,15 +148,6 @@ waitRelease:
 
     jal x0, gameLoop
 
-
-resetPlayer:
-    sw s2, 0(s7)
-    add s7, s8, x0
-    li t1, 0x44d62c
-    sw t1, 0(s7)
-    jal x0, waitRelease
-
-
 moveRight:
     addi t2, s7, 4
     lw t3, 0(t2)
@@ -181,7 +172,7 @@ moveLeft:
     lw t3, 0(t2)
 
     li t4, 0xFF0000
-    beq t3, t4, resetPlayer
+    beq t3, t4, wonGame
 
     add t4, s2, x0
     bne t3, t4, gameLoop
@@ -200,7 +191,7 @@ moveDown:
     lw t3, 0(t2)
 
     li t4, 0xFF0000
-    beq t3, t4, resetPlayer
+    beq t3, t4, wonGame
 
     add t4, s2, x0
     bne t3, t4, gameLoop
@@ -219,7 +210,7 @@ moveUp:
     lw t3, 0(t2)
 
     li t4, 0xFF0000
-    beq t3, t4, resetPlayer
+    beq t3, t4, wonGame
 
     add t4, s2, x0
     bne t3, t4, gameLoop
