@@ -58,7 +58,6 @@ edges: .word 0xf0000114, 0xf0000118 # Row 1
        .word 0xf0000c94, 0xf0000d1c # Row 23
        
 .text
-la s1, LED_MATRIX_0_BASE
 li s2, 0xFFFFFFF # white color to paint paths
 la s3, startLED
 la s4 rowPathLen
@@ -224,6 +223,7 @@ moveUp:
     jal x0, waitRelease
     
 wonGame:
+    la s1, LED_MATRIX_0_BASE
     add t0, x0, s1
     lw t1, 0(t0)
     li t2, 0x44d62c # green
