@@ -103,7 +103,7 @@ setPlayer:
     mv s8, t0
     
 setEnd: 
-    lw t0, 0(s6) # go back to initial position
+    lw t0, 0(s6) # go to goal position
     li t1, 0xFF0000 #red
     sw t1, 0(t0)     
                 
