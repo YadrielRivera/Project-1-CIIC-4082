@@ -1,3 +1,6 @@
+[![Video explicativo del proyecto](https://img.youtube.com/vi/d1WwMVcVp9s/0.jpg)](https://www.youtube.com/watch?v=d1WwMVcVp9s)
+
+
 # Actividad 1: Programación en RISC-V ASM utilizando Emojis
 Para esta actividad aprenderemos la programación en ASM para el RISC-V utilizando la plataforma Ripes y la interfaz de usuario de LED Matrix y los botones de dirección. Las instrucciones de instalación de Ripes se encuentran en el tópico "Actividades" del curso. Además, pueden utilizar la version online de Ripes en Ripes.me.
 
